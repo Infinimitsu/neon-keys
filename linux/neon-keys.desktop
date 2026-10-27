@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Neon Keys
+GenericName=Piano Lessons and Visualizer
+Comment=Play the keyboard, light up the screen, and learn songs
+Exec=@LAUNCHER@
+Icon=neon-keys
+Terminal=false
+Categories=Education;Music;
+Keywords=piano;keyboard;midi;music;lessons;songs;
+StartupWMClass=NeonKeys

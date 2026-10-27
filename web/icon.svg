@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Neon Keys app icon: piano keys with glowing note beams rising out of them. -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a0b33"/>
+      <stop offset="1" stop-color="#05040d"/>
+    </linearGradient>
+    <linearGradient id="beamA" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ff3df2"/>
+      <stop offset="1" stop-color="#ff3df2" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beamB" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#3dfcff"/>
+      <stop offset="1" stop-color="#3dfcff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="beamC" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#fff23d"/>
+      <stop offset="1" stop-color="#fff23d" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="tile"><rect x="8" y="8" width="240" height="240" rx="48"/></clipPath>
+  </defs>
+
+  <rect x="8" y="8" width="240" height="240" rx="48" fill="url(#bg)"/>
+  <g clip-path="url(#tile)">
+    <!-- beams -->
+    <g filter="url(#glow)">
+      <rect x="44" y="40" width="22" height="108" rx="11" fill="url(#beamA)"/>
+      <rect x="117" y="62" width="22" height="86" rx="11" fill="url(#beamB)"/>
+      <rect x="190" y="28" width="22" height="120" rx="11" fill="url(#beamC)"/>
+    </g>
+    <!-- glowing hit line -->
+    <rect x="8" y="150" width="240" height="5" fill="#9dfcff" filter="url(#glow)"/>
+    <!-- white keys -->
+    <g fill="#f4f6ff">
+      <rect x="22" y="158" width="33" height="82" rx="5"/>
+      <rect x="59" y="158" width="33" height="82" rx="5"/>
+      <rect x="96" y="158" width="33" height="82" rx="5"/>
+      <rect x="133" y="158" width="33" height="82" rx="5"/>
+      <rect x="170" y="158" width="33" height="82" rx="5"/>
+      <rect x="207" y="158" width="33" height="82" rx="5"/>
+    </g>
+    <!-- lit keys under the beams -->
+    <rect x="22" y="158" width="33" height="82" rx="5" fill="#ff3df2" opacity="0.85"/>
+    <rect x="207" y="158" width="33" height="82" rx="5" fill="#fff23d" opacity="0.85"/>
+    <!-- black keys -->
+    <g fill="#141020">
+      <rect x="45" y="158" width="22" height="48" rx="4"/>
+      <rect x="82" y="158" width="22" height="48" rx="4"/>
+      <rect x="156" y="158" width="22" height="48" rx="4"/>
+      <rect x="193" y="158" width="22" height="48" rx="4"/>
+    </g>
+    <rect x="119" y="158" width="20" height="48" rx="4" fill="#3dfcff" opacity="0.95"/>
+  </g>
+  <rect x="8" y="8" width="240" height="240" rx="48" fill="none" stroke="#7b5cff" stroke-width="4" opacity="0.7"/>
+</svg>

@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Mary Had a Little Lamb",
+    "kind": "guitar tab",
+    "music": "mary-guitar-tab.txt",
+    "lyrics": "mary-lyrics.txt",
+    "bpm": 90
+  },
+  {
+    "title": "Twinkle Twinkle Little Star",
+    "kind": "piano tab",
+    "music": "twinkle-piano-tab.txt",
+    "lyrics": "twinkle-lyrics.txt",
+    "bpm": 90
+  },
+  {
+    "title": "Frere Jacques",
+    "kind": "letter notes",
+    "music": "frere-jacques-letters.txt",
+    "lyrics": "frere-jacques-lyrics.txt",
+    "bpm": 100
+  },
+  {
+    "title": "Jingle Bells",
+    "kind": "MIDI file",
+    "music": "jingle-bells.mid",
+    "lyrics": "jingle-bells-lyrics.txt",
+    "bpm": 110
+  },
+  {
+    "title": "Twinkle Twinkle Little Star",
+    "kind": "chord sheet",
+    "music": "twinkle-chord-sheet.txt",
+    "lyrics": "",
+    "bpm": 90
+  }
+]

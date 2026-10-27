@@ -1,0 +1,8 @@
+# Keep each script's native line endings whatever OS the repo is cloned on.
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.sh text eol=lf
+linux/neon-keys text eol=lf
+*.desktop text eol=lf
+*.ico binary
+*.mid binary

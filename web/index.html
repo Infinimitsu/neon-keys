@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Neon Keys</title>
+<link rel="icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div id="hud">
+  <div class="panel" id="status">
+    <div class="title">NEON KEYS</div>
+    <div><span class="label">MIDI</span> <span id="midi-status">starting...</span></div>
+    <div><span class="label">VIS&nbsp;</span> <span id="vis-name"></span></div>
+    <div><span class="label">PLAY</span> <span id="play-mode">live</span></div>
+    <div><span class="label">SND&nbsp;</span> <span id="sound-name"></span></div>
+    <div><span class="label">KEYS</span> <span id="keys-name"></span></div>
+  </div>
+  <!-- Every button sends the same key its keyboard shortcut does (see handleKey in app.js). -->
+  <div class="panel" id="toolbar">
+    <div class="btns">
+      <button class="btn" data-key="m" title="M">&#9835; Lessons</button>
+      <button class="btn" data-key="[" title="[">&#9664; Sound</button>
+      <button class="btn" data-key="]" title="]">Sound &#9654;</button>
+      <button class="btn" data-key="i" title="I">&#9673; Camera</button>
+      <button class="btn" id="btn-keys">&#9000; Keys</button>
+      <button class="btn" data-key="v" title="V or 1-4">Visual</button>
+      <button class="btn" id="btn-demo" data-key=" " title="Space">Demo</button>
+      <button class="btn" data-key="enter" title="Enter">Full screen</button>
+    </div>
+    <div class="keys-help">
+      keys: M lessons &middot; I camera &middot; [ ] sound &middot; V / 1-4 visual &middot; 0 auto-cycle &middot; Space demo &middot; Enter full screen &middot; Tab hide &middot; Esc stop all notes<br>
+      A W S E D F T G Y H U J K O L P ; ' play &middot; Z/X octave
+    </div>
+  </div>
+  <button class="btn" id="hud-toggle" data-key="tab" title="Tab">Hide</button>
+  <div id="chord" class="fade"><div id="chord-name"></div><div id="chord-notes"></div></div>
+  <div id="hint">play the keyboard or tap the keys &middot; Demo to watch &middot; Lessons to learn</div>
+  <div class="panel" id="lesson">
+    <div id="lesson-title"></div>
+    <div id="lesson-say"></div>
+    <div id="lesson-lyrics"></div>
+    <div id="lesson-bar"><div id="lesson-fill"></div></div>
+    <div id="lesson-info"></div>
+    <div class="btns" id="lesson-btns">
+      <button class="btn done-only" data-key="enter" title="Enter">Next lesson &#9654;</button>
+      <button class="btn" id="btn-pause" data-key=" " title="Space">Pause</button>
+      <button class="btn" data-key="r" title="R">Restart</button>
+      <button class="btn" id="btn-listen" data-key="c" title="C">Listen</button>
+      <button class="btn" id="btn-mode" data-key="n" title="N">Mode</button>
+      <button class="btn" data-key="-" title="-">Slower</button>
+      <button class="btn" data-key="=" title="=">Faster</button>
+      <button class="btn" data-key="m" title="M">Lessons</button>
+      <button class="btn" data-key="escape" title="Esc">Exit</button>
+    </div>
+  </div>
+  <div class="panel" id="cam">
+    <div class="title">CAMERA JAM</div>
+    <canvas id="cam-view" width="256" height="192"></canvas>
+    <div id="cam-msg"></div>
+    <div class="btns">
+      <button class="btn" id="btn-cam-style">Style</button>
+      <button class="btn" id="btn-cam-scale">Scale</button>
+      <button class="btn" data-key="i" title="I">Close</button>
+    </div>
+  </div>
+  <video id="cam-video" playsinline muted hidden></video>
+  <div id="editor">
+    <div class="editor-box panel">
+      <div class="title" id="ed-heading">ADD A SONG</div>
+      <label class="ed-field">Song name <input id="ed-title" type="text" placeholder="My favorite song"></label>
+      <div class="ed-row">
+        <label>Tempo <input id="ed-bpm" type="number" min="30" max="240" value="90"></label>
+        <label>Transpose <input id="ed-transpose" type="number" min="-24" max="24" value="0"></label>
+        <label>Music type <select id="ed-kind">
+          <option value="auto">Auto</option><option value="melody">Melody / tab</option><option value="chords">Chords</option>
+        </select></label>
+        <label id="ed-chordbeats-wrap" hidden>Beats per chord <input id="ed-chordbeats" type="number" min="1" max="16" value="4"></label>
+        <label class="ed-check"><input id="ed-melody" type="checkbox"> Melody only</label>
+      </div>
+      <label class="ed-field">Music: paste a guitar tab, piano tab, chord sheet, or letter notes (E D C D E E E)
+        <textarea id="ed-music" rows="5" spellcheck="false" placeholder="e|-----0-----|&#10;B|-1-3---1---|&#10;G|-----------|&#10;D|-----------|&#10;A|-----------|&#10;E|-----------|"></textarea>
+      </label>
+      <div class="ed-row">
+        <button class="btn" id="ed-record">&#9679; Record on the keyboard</button>
+        <button class="btn" id="ed-file">Open a MIDI or text file...</button>
+        <select id="ed-example"><option value="">Load an example...</option></select>
+      </div>
+      <div id="ed-midi"></div>
+      <label class="ed-field">Lyrics (optional): one line per line of the song; split words into syllables with hyphens, like Straw-ber-ry
+        <textarea id="ed-lyrics" rows="3" placeholder="Twin-kle, twin-kle, lit-tle star"></textarea>
+      </label>
+      <div id="ed-status"></div>
+      <div class="btns">
+        <button class="btn" id="ed-play">Save &amp; listen</button>
+        <button class="btn" id="ed-save">Save</button>
+        <button class="btn" id="ed-delete">Delete</button>
+        <button class="btn" id="ed-cancel">Cancel</button>
+      </div>
+      <input type="file" id="ed-file-input" accept=".mid,.midi,.txt,text/plain,audio/midi" hidden>
+    </div>
+  </div>
+  <div class="panel" id="recbar">
+    <div class="title">&#9679; RECORDING</div>
+    <div id="rec-info"></div>
+    <div class="btns">
+      <button class="btn" id="rec-stop">Stop</button>
+      <button class="btn" id="rec-cancel">Cancel</button>
+    </div>
+  </div>
+  <div id="keys-menu">
+    <div class="keys-box panel">
+      <div class="title">HOW MANY KEYS?</div>
+      <div class="keys-help-text">Auto works for many keyboards. If the screen doesn't match yours, pick its number of keys.</div>
+      <div class="btns" id="keys-list"></div>
+      <div class="btns"><button class="btn" id="keys-close">Close</button></div>
+    </div>
+  </div>
+  <div id="menu">
+    <div class="menu-box panel">
+      <div class="title">LESSONS</div>
+      <div id="menu-list"></div>
+      <div class="menu-foot">
+        <span>Tap a lesson to start &middot; stars are your best</span>
+        <button class="btn" data-key="escape" title="Esc">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="audio.js"></script>
+<script src="lessons.js"></script>
+<script src="song-import.js"></script>
+<script src="tutor.js"></script>
+<script src="camera.js"></script>
+<script src="songs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

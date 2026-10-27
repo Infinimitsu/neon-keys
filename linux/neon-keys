@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Neon Keys launcher: serves the app on localhost and opens it full-screen as a Chrome app window
+# with the user's own profile (which remembers the MIDI/camera permissions and lesson stars).
+# Closing the window stops the server. Installed by install.sh, per user or for everyone (--system).
+# --password-store=basic: the app saves no passwords, and using the GNOME keyring makes Chrome ask
+# to unlock it on accounts that log in automatically.
+set -u
+
+USER_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/neon-keys"  # per-user: profile, and the app if installed per user
+if [ -d "$USER_DIR/web" ]; then WEB_DIR="$USER_DIR/web"; else WEB_DIR=/opt/neon-keys/web; fi
+# One port per user so two people logged in at once don't share a server. Fixed per user, because
+# the browser keeps lesson progress per localhost:port.
+uid=$(id -u)
+PORT=$(( uid >= 1000 && uid < 2000 ? 8024 + uid - 1000 : 8024 ))
+URL="http://localhost:$PORT/"
+
+complain() {
+  zenity --error --title="Neon Keys" --text="$1" 2>/dev/null || notify-send "Neon Keys" "$1" 2>/dev/null || echo "$1" >&2
+  exit 1
+}
+
+port_open() { timeout 1 bash -c "exec 3<>/dev/tcp/127.0.0.1/$PORT" 2>/dev/null; }
+
+BROWSER=""
+for b in google-chrome google-chrome-stable chromium chromium-browser; do
+  path=$(command -v "$b") || continue
+  BROWSER=$path
+  break
+done
+[ -n "$BROWSER" ] || complain "Neon Keys needs Google Chrome. Run the Neon Keys installer again to set it up."
+[ -f "$WEB_DIR/index.html" ] || complain "Neon Keys files are missing from $WEB_DIR. Run the installer again."
+mkdir -p "$USER_DIR"
+
+server_pid=""
+if ! port_open; then  # otherwise Neon Keys is already open and serving
+  # Like `python3 -m http.server`, but tells Chrome to recheck files, so updates show up right away.
+  python3 -c '
+import functools, http.server, sys
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-cache")
+        super().end_headers()
+    def log_message(self, *args):
+        pass
+http.server.ThreadingHTTPServer(("127.0.0.1", int(sys.argv[1])), functools.partial(Handler, directory=sys.argv[2])).serve_forever()
+' "$PORT" "$WEB_DIR" >/dev/null 2>&1 &
+  server_pid=$!
+  for _ in $(seq 50); do port_open && break; sleep 0.1; done
+  port_open || complain "Neon Keys could not start its local server on port $PORT."
+fi
+
+"$BROWSER" \
+  --user-data-dir="$USER_DIR/profile" \
+  --app="$URL" \
+  --class=NeonKeys \
+  --start-fullscreen \
+  --no-first-run \
+  --no-default-browser-check \
+  --password-store=basic \
+  --autoplay-policy=no-user-gesture-required \
+  >/dev/null 2>&1
+
+[ -n "$server_pid" ] && kill "$server_pid" 2>/dev/null
+exit 0

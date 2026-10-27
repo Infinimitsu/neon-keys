@@ -1,0 +1,33 @@
+# Local notes for AI coding assistants: they describe this one machine and network, not the project
+CLAUDE.md
+.claude/
+
+# Personal PowerShell scripts for driving the Donner keyboard (kept local, not part of the app)
+tools/
+
+# Release builds (made by scripts/build-release.sh, attached to GitHub releases, never committed)
+dist/
+
+# Logs
+*.log
+
+# Scratch from testing (screenshots, temp files)
+.shots/
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Node (no build step today, but keep it out if one is ever added)
+node_modules/
+
+# Editors and OS clutter
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
